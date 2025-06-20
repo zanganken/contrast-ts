@@ -1,11 +1,11 @@
-# generate-contrast
+# contrast-ts
 
 > Contrasted colors generator, can also set luminance of a specified color.
 
 ## Install
 
 ```shell
-npm install generate-contrast
+npm install contrast-ts
 ```
 
 ## Usage
@@ -16,7 +16,7 @@ npm install generate-contrast
 > <br>Main color needs to be specified. A secondary one can be specified as well but, while being the better choice, isn't necessary.
 
 ```js
-import { generateContrastedColors } from "generate-contrast";
+import { generateContrastedColors } from "contrast-ts";
 
 const contrastedColors = generateContrastedColors({
   mainColor: "royalblue",
@@ -26,7 +26,7 @@ const contrastedColors = generateContrastedColors({
   output: "rgb",
   format: "css",
 });
-// returns [ "rgb(0, 43, 191)", "rgb(255, 255, 255)" ]
+// returns [ 'rgb(24, 51, 168)', 'rgb(255, 255, 255)' ]
 ```
 
 #### _mainColor_ and _secondaryColor (optional)_ parameters :
@@ -66,13 +66,13 @@ Accepts **"css"** and **"object"** as values.
 > _setLuminance_ lets you change the **WCAG relative luminance** of a color to a specified amount.
 
 ```js
-import { setLuminance } from "generate-contrast";
+import { setLuminance } from "contrast-ts";
 
 const blueAt0dot5Luminance = setLuminance("rgb(0 0 255)", 0.5, {
   output: "rgb",
   format: "css",
 });
-// returns "rgb(181, 181, 255)"
+// returns "rgb(154, 188, 255)"
 ```
 
 #### _color_ parameter :

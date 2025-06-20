@@ -1,17 +1,16 @@
 {
-  "name": "generate-contrast",
-  "version": "0.0.1",
+  "name": "contrast-ts",
+  "version": "0.1.0",
   "description": "Contrasted colors generator, can also set luminance of a specified color.",
   "keywords": [
-    "typescript",
-    "types",
-    "colors",
+    "accessibility",
     "color",
     "contrast",
-    "accessibility",
     "luminance",
     "relative luminance",
-    "generator"
+    "generator",
+    "css",
+    "typescript"
   ],
   "type": "module",
   "license": "MIT",

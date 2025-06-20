@@ -1,9 +1,13 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { ColorEntry, ColorOutput } from "~/contrast";
 import { FormatterReturn } from "~/format";
 import { SetLuminanceOptions } from "~/luminance";
-import { generateContrastedColors, setLuminance } from "../dist";
+import {
+  ColorEntry,
+  ColorOutput,
+  generateContrastedColors,
+  setLuminance,
+} from "../dist";
 
 describe(`${generateContrastedColors.name} function`, () => {
   const tests = <const>[
@@ -14,7 +18,7 @@ describe(`${generateContrastedColors.name} function`, () => {
         secondaryColor: "aliceblue",
         priority: "secondary",
       },
-      ["rgb(127, 70, 0)", "rgb(240, 248, 255)"],
+      ["rgb(107, 80, 25)", "rgb(240, 248, 255)"],
     ],
     [
       {
@@ -23,7 +27,7 @@ describe(`${generateContrastedColors.name} function`, () => {
         secondaryColor: "aliceblue",
         priority: "main",
       },
-      ["rgb(195, 165, 111)", "rgb(0, 29, 61)"],
+      ["rgb(195, 165, 111)", "rgb(26, 31, 36)"],
     ],
     [
       {
@@ -36,16 +40,11 @@ describe(`${generateContrastedColors.name} function`, () => {
       [
         {
           mode: "oklch",
-          l: 0.4686595423141175,
-          c: 0.1057714747562277,
-          h: 64.2352042787947,
+          l: 0.46600800295261063,
+          c: 0.0794454372438439,
+          h: 81.64234808269421,
         },
-        {
-          mode: "oklch",
-          l: 0.9999999859119187,
-          c: 3.5594404092893915e-8,
-          h: 106.37411396324427,
-        },
+        { mode: "oklch", l: 0.999999993473546, c: 0 },
       ],
     ],
   ];
@@ -66,10 +65,10 @@ describe(`${setLuminance.name} function`, () => {
     [ColorEntry, number, SetLuminanceOptions<ColorOutput, "css" | "object">?],
     FormatterReturn<ColorOutput, "css" | "object">
   ][] = <const>[
-    [["royalblue", 0.5], "rgb(168, 185, 255)"],
+    [["royalblue", 0.5], "rgb(158, 187, 255)"],
     [
       ["royalblue", 0.3, { output: "oklch" }],
-      "oklch(0.6772522146443298 0.1480089674306779 271.88022367891097)",
+      "oklch(0.6759038392358254 0.1703109011963002 266.39959456769907)",
     ],
   ];
 

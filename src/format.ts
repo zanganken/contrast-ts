@@ -1,6 +1,5 @@
 import "culori/css";
 import {
-  Color,
   clampChroma,
   converter,
   formatCss,
@@ -8,13 +7,14 @@ import {
   formatRgb,
 } from "culori/fn";
 import { FindColorByMode } from "culori/src/common";
+import { ColorEntry } from "dist";
 import { ColorOutput } from "~/contrast";
 import { detectColorGamut } from "~/gamut";
 
 export type Formatter<
   O extends ColorOutput,
   F extends O extends "hex" ? "css" : "object" | "css"
-> = (color: Color) => FormatterReturn<O, F>;
+> = (color: ColorEntry) => FormatterReturn<O, F>;
 
 export type FormatterReturn<
   O extends ColorOutput,
@@ -31,34 +31,34 @@ export function formatter<
 
   switch (format) {
     case "object":
-      return <Formatter<O, F>>(
-        ((color: Color) =>
-          toFormat(clampChroma(color, color.mode, detectColorGamut())))
-      );
+      return <Formatter<O, F>>((color: ColorEntry) => {
+        if (typeof color === "string") color = toFormat(color)!;
+        return toFormat(clampChroma(color, color.mode, detectColorGamut()));
+      });
 
     case "css":
       switch (output) {
         case "rgb":
-          return <Formatter<O, F>>(
-            ((color: Color) =>
-              formatRgb(
-                toFormat(clampChroma(color, color.mode, detectColorGamut()))
-              ))
-          );
+          return <Formatter<O, F>>((color: ColorEntry) => {
+            if (typeof color === "string") color = toFormat(color)!;
+            return formatRgb(
+              toFormat(clampChroma(color, color.mode, detectColorGamut()))
+            );
+          });
         case "hex":
-          return <Formatter<O, F>>(
-            ((color: Color) =>
-              formatHex(
-                toFormat(clampChroma(color, color.mode, detectColorGamut()))
-              ))
-          );
+          return <Formatter<O, F>>((color: ColorEntry) => {
+            if (typeof color === "string") color = toFormat(color)!;
+            return formatHex(
+              toFormat(clampChroma(color, color.mode, detectColorGamut()))
+            );
+          });
         default:
-          return <Formatter<O, F>>(
-            ((color: Color) =>
-              formatCss(
-                toFormat(clampChroma(color, color.mode, detectColorGamut()))
-              ))
-          );
+          return <Formatter<O, F>>((color: ColorEntry) => {
+            if (typeof color === "string") color = toFormat(color)!;
+            return formatCss(
+              toFormat(clampChroma(color, color.mode, detectColorGamut()))
+            );
+          });
       }
   }
 }

@@ -108,10 +108,9 @@ function generateContrastedColors<
   if (!secondaryColor) throw Error("invalid secondaryColor argument");
 
   const toFormat = formatter(output, format);
-  const toObject = formatter(output === "hex" ? "rgb" : output, "object");
 
-  mainColor = toObject(mainColor);
-  secondaryColor = toObject(secondaryColor);
+  mainColor = toFormat(mainColor);
+  secondaryColor = toFormat(secondaryColor);
   minWcagContrast = clampNumber(minWcagContrast, 1, 21);
 
   if (wcagContrast(mainColor, secondaryColor) < minWcagContrast) {
@@ -120,7 +119,7 @@ function generateContrastedColors<
       default:
         {
           const [minLuminanceGoal, maxLuminanceGoal] = calcLuminanceGoals(
-            toFormat(mainColor),
+            mainColor,
             minWcagContrast
           );
 
@@ -128,15 +127,15 @@ function generateContrastedColors<
             secondaryColor,
             isDark(mainColor) ? maxLuminanceGoal : minLuminanceGoal,
             {
-              output: output === "hex" ? "rgb" : output,
-              format: "object",
-              aim: isDark(secondaryColor) ? "above" : "below",
+              output,
+              format,
+              aim: isDark(mainColor) ? "above" : "below",
             }
           );
 
           if (wcagContrast(mainColor, secondaryColor) < minWcagContrast) {
             const [minLuminanceGoal, maxLuminanceGoal] = calcLuminanceGoals(
-              toFormat(secondaryColor),
+              secondaryColor,
               minWcagContrast
             );
 
@@ -144,8 +143,8 @@ function generateContrastedColors<
               mainColor,
               isDark(mainColor) ? minLuminanceGoal : maxLuminanceGoal,
               {
-                output: output === "hex" ? "rgb" : output,
-                format: "object",
+                output,
+                format,
               }
             );
           }
@@ -155,7 +154,7 @@ function generateContrastedColors<
       case "secondary":
         {
           const [minLuminanceGoal, maxLuminanceGoal] = calcLuminanceGoals(
-            toFormat(secondaryColor),
+            secondaryColor,
             minWcagContrast
           );
 
@@ -163,22 +162,25 @@ function generateContrastedColors<
             mainColor,
             isDark(secondaryColor) ? maxLuminanceGoal : minLuminanceGoal,
             {
-              output: output === "hex" ? "rgb" : output,
-              format: "object",
+              output,
+              format,
               aim: isDark(secondaryColor) ? "above" : "below",
             }
           );
 
           if (wcagContrast(mainColor, secondaryColor) < minWcagContrast) {
             const [minLuminanceGoal, maxLuminanceGoal] = calcLuminanceGoals(
-              toFormat(mainColor),
+              mainColor,
               minWcagContrast
             );
 
             secondaryColor = setLuminance(
               secondaryColor,
               isDark(secondaryColor) ? minLuminanceGoal : maxLuminanceGoal,
-              { output: output === "hex" ? "rgb" : output, format: "object" }
+              {
+                output,
+                format,
+              }
             );
           }
         }
@@ -190,21 +192,27 @@ function generateContrastedColors<
           const secondaryLuminance = wcagLuminance(secondaryColor);
 
           const [minLuminance, maxLuminance] = calcBothLuminances(
-            toFormat(mainColor),
-            toFormat(secondaryColor),
+            mainLuminance,
+            secondaryLuminance,
             minWcagContrast
           );
 
           mainColor = setLuminance(
-            toFormat(mainColor),
+            mainColor,
             mainLuminance >= secondaryLuminance ? maxLuminance : minLuminance,
-            { output: output === "hex" ? "rgb" : output, format: "object" }
+            {
+              output,
+              format,
+            }
           );
 
           secondaryColor = setLuminance(
-            toFormat(secondaryColor),
+            secondaryColor,
             mainLuminance < secondaryLuminance ? maxLuminance : minLuminance,
-            { output: output === "hex" ? "rgb" : output, format: "object" }
+            {
+              output,
+              format,
+            }
           );
         }
 
@@ -212,7 +220,7 @@ function generateContrastedColors<
     }
   }
 
-  return [toFormat(mainColor), toFormat(secondaryColor)];
+  return [mainColor, secondaryColor];
 }
 
 export default generateContrastedColors;

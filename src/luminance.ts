@@ -4,7 +4,6 @@ import "culori/css";
 import { Color, modeRgb, parse, useMode, wcagLuminance } from "culori/fn";
 import { ColorEntry, ColorOutput } from "~/contrast";
 import { FormatterReturn, formatter } from "~/format";
-import { getLinearGoal, toLRgb } from "~/lrgb";
 
 const toRgb = useMode(modeRgb);
 
@@ -36,63 +35,39 @@ export function setLuminance<
   if (!color) throw Error("invalid argument color");
 
   const toFormat = formatter(output ?? "rgb", format ?? "css");
+  const toOklch = formatter("oklch", "object");
 
   if (luminanceGoal >= 1)
     return <FormatterReturn<O, F>>toFormat({ mode: "rgb", r: 1, g: 1, b: 1 });
   if (luminanceGoal < 0)
     return <FormatterReturn<O, F>>toFormat({ mode: "rgb", r: 0, g: 0, b: 0 });
 
-  let res, resLuminance, step;
-  const initialLuminanceGoal = luminanceGoal;
+  let res = toOklch(color);
+  let resLuminance = wcagLuminance(toFormat(res));
+
+  let factor = resLuminance < luminanceGoal ? 1 : -1;
+  let minStep = resLuminance < luminanceGoal ? res.l : 0;
+  let maxStep = resLuminance < luminanceGoal ? 1 : res.l;
+
+  aim ??= resLuminance < luminanceGoal ? "above" : "below";
 
   do {
-    step = luminanceGoal - wcagLuminance(color);
-    const lRgb = toLRgb(color);
+    res.l += (factor * (maxStep - minStep)) / 2;
+    resLuminance = wcagLuminance(toFormat(res));
 
-    const lR = lRgb.r + step;
-    const lG = lRgb.g + step;
-    const lB = lRgb.b + step;
+    if (resLuminance < luminanceGoal) {
+      minStep = res.l;
+      factor = 1;
+    }
+    if (resLuminance > luminanceGoal) {
+      maxStep = res.l;
+      factor = -1;
+    }
+  } while (maxStep - minStep > 0.0002);
 
-    lRgb.r = getLinearGoal(
-      { coeff: 0.2126, value: lR },
-      [
-        { coeff: 0.7152, value: lG },
-        { coeff: 0.0722, value: lB },
-      ],
-      luminanceGoal
-    );
-    lRgb.g = getLinearGoal(
-      { value: lG, coeff: 0.7152 },
-      [
-        { value: lR, coeff: 0.2126 },
-        { value: lB, coeff: 0.0722 },
-      ],
-      luminanceGoal
-    );
-    lRgb.b = getLinearGoal(
-      { value: lB, coeff: 0.0722 },
-      [
-        { value: lR, coeff: 0.2126 },
-        { value: lG, coeff: 0.7152 },
-      ],
-      luminanceGoal
-    );
+  res.l = aim === "above" ? maxStep : minStep;
 
-    res = toFormat(lRgb);
-    resLuminance = wcagLuminance(res);
-
-    aim ??= step > 0 ? "above" : "below";
-
-    // helps with contrast ratio
-    if (aim === "above") luminanceGoal += 0.0015;
-    else luminanceGoal -= 0.0015;
-  } while (
-    aim === "above"
-      ? resLuminance < initialLuminanceGoal
-      : resLuminance > initialLuminanceGoal
-  );
-
-  return <FormatterReturn<O, F>>res;
+  return <FormatterReturn<O, F>>toFormat(res);
 }
 
 export function inLuminance(luminance: number) {
@@ -104,7 +79,7 @@ export function calcLuminanceGoals(
   minContrast: number
 ) {
   if (typeof reference === "string") reference = parse(reference)!;
-  if (!reference) throw Error("invalid reference argument");
+  if (reference === undefined) throw Error("invalid reference argument");
 
   const referenceLuminance =
     typeof reference === "number" ? reference : wcagLuminance(reference);
@@ -121,10 +96,10 @@ export function calcBothLuminances(
   minContrast: number
 ) {
   if (typeof colorA === "string") colorA = parse(colorA)!;
-  if (!colorA) throw Error("invalid colorA argument");
+  if (colorA === undefined) throw Error("invalid colorA argument");
 
   if (typeof colorB === "string") colorB = parse(colorB)!;
-  if (!colorB) throw Error("invalid colorB argument");
+  if (colorB === undefined) throw Error("invalid colorB argument");
 
   const luminances = [
     typeof colorA === "number" ? colorA : wcagLuminance(colorA),
@@ -147,8 +122,8 @@ export function calcBothLuminances(
   return <[number, number]>[minLuminance, maxLuminance];
 }
 
-export function isDark(color: Color) {
-  const { r, g, b } = toRgb(color);
+export function isDark(color: ColorEntry) {
+  const { r, g, b } = toRgb(color)!;
 
   const yiq = ((r * 299 + g * 587 + b * 114) * 255) / 1000;
 
