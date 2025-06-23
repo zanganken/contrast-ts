@@ -15,7 +15,7 @@
   "type": "module",
   "license": "MIT",
   "author": "Zanganken",
-  "repository": "https://github.com/zanganken/sharp-switch",
+  "repository": "https://github.com/zanganken/contrast-ts",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
