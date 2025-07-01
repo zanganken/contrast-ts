@@ -12,7 +12,6 @@
     "css",
     "typescript"
   ],
-  "type": "module",
   "license": "MIT",
   "author": "Zanganken",
   "repository": "https://github.com/zanganken/contrast-ts",
