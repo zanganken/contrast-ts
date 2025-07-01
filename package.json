@@ -1,6 +1,6 @@
 {
   "name": "contrast-ts",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Contrasted colors generator, can also set luminance of a specified color.",
   "keywords": [
     "accessibility",

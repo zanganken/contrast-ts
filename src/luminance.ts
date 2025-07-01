@@ -39,7 +39,7 @@ export function setLuminance<
 
   if (luminanceGoal >= 1)
     return <FormatterReturn<O, F>>toFormat({ mode: "rgb", r: 1, g: 1, b: 1 });
-  if (luminanceGoal < 0)
+  if (luminanceGoal <= 0)
     return <FormatterReturn<O, F>>toFormat({ mode: "rgb", r: 0, g: 0, b: 0 });
 
   let res = toOklch(color);
