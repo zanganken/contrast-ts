@@ -15,6 +15,7 @@
   "license": "MIT",
   "author": "Zanganken",
   "repository": "https://github.com/zanganken/contrast-ts",
+  "homepage": "https://zanganken.github.io/contrast-ts",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -28,11 +29,13 @@
   },
   "scripts": {
     "test": "tsx --test",
-    "build": "tsup"
+    "build": "tsup",
+    "deploy": "gh-pages -d docs"
   },
   "devDependencies": {
     "@types/color-name": "^2.0.0",
     "@types/node": "^22.15.24",
+    "gh-pages": "^6.3.0",
     "ts-node": "^10.9.2",
     "tsup": "^8.5.0",
     "tsx": "^4.19.4",
